@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { stripHtml } from "string-strip-html";
 import cardActivationSchema from "../schemas/cardActivationSchema.js";
 import cardSchema from "../schemas/cardSchema.js";
+import rechargeSchema from "../schemas/rechargeSchema.js";
 
 function sanitizeString(string: string) {
   return (stripHtml(string).result).trim();
@@ -9,7 +10,8 @@ function sanitizeString(string: string) {
 
 const schemas = {
   "/card": cardSchema,
-  "/card/activation": cardActivationSchema
+  "/card/activation": cardActivationSchema,
+  "/recharge": rechargeSchema
 }
 
 export default async function validateSchemaMiddleware(req: Request, res: Response, next: NextFunction) {

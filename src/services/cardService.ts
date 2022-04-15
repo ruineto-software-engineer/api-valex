@@ -6,6 +6,7 @@ import { valid_credit_card } from '../utils/cardUtils.js';
 import { faker } from '@faker-js/faker';
 import dayjs from 'dayjs';
 import bcrypt from 'bcrypt';
+import rechargeSchema from '../schemas/rechargeSchema.js';
 
 export function generateCardNumber() {
 	let number = faker.finance.creditCardNumber('mastercard');
@@ -83,14 +84,24 @@ export async function paymentsCard(id: number) {
 	const searchedPayments = await paymentRepository.findByCardId(id);
 	if (!searchedPayments) throw errosUtils.notFoundError('Card');
 
-	return searchedPayments;
+	const payments = searchedPayments.map(payment => ({
+		...payment,
+		timestamp: dayjs(payment.timestamp).format('DD/MM/YYYY')
+	}));
+
+	return payments;
 }
 
 export async function rechargesCard(id: number) {
 	const searchedRecharges = await reachargeRepository.findByCardId(id);
 	if (!searchedRecharges) throw errosUtils.notFoundError('Card');
 
-	return searchedRecharges;
+	const recharges = searchedRecharges.map(recharge => ({
+		...recharge,
+		timestamp: dayjs(recharge.timestamp).format('DD/MM/YYYY')
+	}));
+
+	return recharges;
 }
 
 export function balanceCard(searchedPayments, searchedRecharges) {
