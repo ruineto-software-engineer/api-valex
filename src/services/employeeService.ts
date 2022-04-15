@@ -1,9 +1,8 @@
 import * as employeeRepository from '../repositories/employeeRepository.js';
 import * as errorUtils from '../utils/errosUtils.js';
-import dayjs from "dayjs";
 
 export async function employeeValidation(employeeId: number, employeeIdParams: number) {
-	if(employeeId !== employeeIdParams) throw errorUtils.badRequestError();
+	if (employeeId !== employeeIdParams) throw errorUtils.badRequestError('employeeIdParams and the Identifier provided!');
 
 	const employee = await employeeRepository.findById(employeeId);
 	if (!employee) throw errorUtils.notFoundError('Employee');
@@ -14,8 +13,8 @@ export async function employeeValidation(employeeId: number, employeeIdParams: n
 export function generateEmployeeCardName(employeeFullName: string) {
 	const employeeFullNameUpperCase = employeeFullName.toUpperCase();
 	const employeeNameArr = employeeFullNameUpperCase
-    .split(' ')
-    .filter((name) => name.length >= 3);
+		.split(' ')
+		.filter((name) => name.length >= 3);
 
 	let hashTable = {};
 	let employeeCardNameArr = [];
@@ -49,8 +48,4 @@ export function generateEmployeeCardName(employeeFullName: string) {
 	}
 
 	return employeeCardNameArr.join(' ');
-}
-
-export function generateExpirationDate() {
-  return dayjs().add(5, 'year').format('MM/YY');
 }

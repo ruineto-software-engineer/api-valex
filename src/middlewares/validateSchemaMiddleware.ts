@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { stripHtml } from "string-strip-html";
+import cardActivationSchema from "../schemas/cardActivationSchema.js";
 import cardSchema from "../schemas/cardSchema.js";
 
 function sanitizeString(string: string) {
@@ -7,12 +8,19 @@ function sanitizeString(string: string) {
 }
 
 const schemas = {
-  "/card": cardSchema
+  "/card": cardSchema,
+  "/card/activation": cardActivationSchema
 }
 
 export default async function validateSchemaMiddleware(req: Request, res: Response, next: NextFunction) {
   const { body } = req;
-  const schema = schemas["/" + req.path.split("/")[1]];
+
+  let schema;
+  if(req.path.includes("activation")){
+    schema = schemas[req.path.substring(0, req.path.length - 2)];
+  }else{
+    schema = schemas["/" + req.path.split("/")[1]];
+  }
 
   Object.keys(body).forEach(key => {
     if (typeof (body[key]) === "string") body[key] = sanitizeString(body[key])

@@ -8,7 +8,7 @@ export async function createCard(req: Request, res: Response) {
 
 	const employee = await employeeService.employeeValidation(employeeId, employeeIdParams);
 	const cardholderName = employeeService.generateEmployeeCardName(employee.fullName);
-	const expirationDate = employeeService.generateExpirationDate();
+	const expirationDate = cardService.generateExpirationDate();
 	const number = cardService.generateCardNumber();
 	const securityCode = cardService.generateCardCVV();
 
@@ -23,10 +23,29 @@ export async function createCard(req: Request, res: Response) {
 		originalCardId: null,
 		isBlocked: true,
 		type
-	}
+	};
 
 	await cardService.searchCardByTypeAndEmployeeId(type, employeeId);
 	await cardService.insertNewCard(newCard);
 
 	res.sendStatus(201);
+}
+
+export async function activationCard(req: Request, res: Response) {
+	const cardData = req.body;
+
+	const searchedCard = await cardService.findCardById(cardData);
+	cardService.expirationDateValid(searchedCard.expirationDate);
+	cardService.isActivatedCard(searchedCard.password);
+	cardService.isValidCVV(cardData.cvv, searchedCard.securityCode);
+	const passwordHashed = cardService.cardPasswordHashed(cardData.password);
+
+	const activatedCard = {
+		...searchedCard,
+		password: passwordHashed
+	};
+
+	await cardService.activeCard(cardData.cardId, activatedCard);
+
+	res.sendStatus(200);
 }
