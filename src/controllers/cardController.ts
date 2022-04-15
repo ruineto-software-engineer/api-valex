@@ -34,7 +34,7 @@ export async function createCard(req: Request, res: Response) {
 export async function activationCard(req: Request, res: Response) {
 	const cardData = req.body;
 
-	const searchedCard = await cardService.findCardById(cardData);
+	const searchedCard = await cardService.findCardById(cardData.cardId);
 	cardService.expirationDateValid(searchedCard.expirationDate);
 	cardService.isActivatedCard(searchedCard.password);
 	cardService.isValidCVV(cardData.cvv, searchedCard.securityCode);
@@ -48,4 +48,21 @@ export async function activationCard(req: Request, res: Response) {
 	await cardService.activeCard(cardData.cardId, activatedCard);
 
 	res.sendStatus(200);
+}
+
+export async function balanceCard(req: Request, res: Response) {
+	const cardId = parseInt(req.params.cardId);
+
+	const searchedCard = await cardService.findCardById(cardId);
+	const searchedPayments = await cardService.paymentsCard(searchedCard.id);
+	const searchedRecharges = await cardService.rechargesCard(searchedCard.id);
+	const balance = cardService.balanceCard(searchedPayments, searchedRecharges);
+
+	const totalBalance = {
+		balance,
+		transactions: searchedPayments,
+		recharges: searchedRecharges
+	}
+
+	res.status(200).send(totalBalance);
 }

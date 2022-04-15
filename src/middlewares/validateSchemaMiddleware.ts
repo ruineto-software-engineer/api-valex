@@ -17,7 +17,7 @@ export default async function validateSchemaMiddleware(req: Request, res: Respon
 
   let schema;
   if(req.path.includes("activation")){
-    schema = schemas[req.path.substring(0, req.path.length - 2)];
+    schema = schemas['/card/activation'];
   }else{
     schema = schemas["/" + req.path.split("/")[1]];
   }

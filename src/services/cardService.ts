@@ -1,4 +1,6 @@
 import * as cardRepository from '../repositories/cardRepository.js';
+import * as paymentRepository from '../repositories/paymentRepository.js';
+import * as reachargeRepository from '../repositories/rechargeRepository.js';
 import * as errosUtils from '../utils/errosUtils.js';
 import { valid_credit_card } from '../utils/cardUtils.js';
 import { faker } from '@faker-js/faker';
@@ -47,8 +49,8 @@ export async function searchCardByTypeAndEmployeeId(type, employeeId: number) {
 	if (searchedCard) throw errosUtils.conflictError('Card');
 }
 
-export async function findCardById(cardData) {
-	const searchedCard = await cardRepository.findById(cardData.cardId);
+export async function findCardById(cardId: number) {
+	const searchedCard = await cardRepository.findById(cardId);
 	if (!searchedCard) throw errosUtils.notFoundError('Card');
 
 	return searchedCard;
@@ -75,4 +77,32 @@ export function cardPasswordHashed(password: string) {
 
 export async function activeCard(cardId: number, activatedCard) {
 	await cardRepository.update(cardId, activatedCard);
+}
+
+export async function paymentsCard(id: number) {
+	const searchedPayments = await paymentRepository.findByCardId(id);
+	if (!searchedPayments) throw errosUtils.notFoundError('Card');
+
+	return searchedPayments;
+}
+
+export async function rechargesCard(id: number) {
+	const searchedRecharges = await reachargeRepository.findByCardId(id);
+	if (!searchedRecharges) throw errosUtils.notFoundError('Card');
+
+	return searchedRecharges;
+}
+
+export function balanceCard(searchedPayments, searchedRecharges) {
+	let totalPayments = 0;
+	if (searchedPayments.length > 0) {
+		totalPayments = searchedPayments.map((payment) => (totalPayments += payment.amount))[0];
+	}
+
+	let totalRecharges = 0;
+	if (searchedRecharges.length > 0) {
+		totalRecharges = searchedRecharges.map((recharge) => (totalRecharges += recharge.amount))[0];
+	}
+
+	return totalRecharges - totalPayments;
 }
