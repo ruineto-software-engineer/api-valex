@@ -21,7 +21,7 @@ export async function createCard(req: Request, res: Response) {
 		password: null,
 		isVirtual: false,
 		originalCardId: null,
-		isBlocked: true,
+		isBlocked: false,
 		type
 	};
 

@@ -1,12 +1,11 @@
 import * as cardRepository from '../repositories/cardRepository.js';
 import * as paymentRepository from '../repositories/paymentRepository.js';
 import * as reachargeRepository from '../repositories/rechargeRepository.js';
-import * as errosUtils from '../utils/errosUtils.js';
+import * as errorsUtils from '../utils/errorsUtils.js';
 import { valid_credit_card } from '../utils/cardUtils.js';
 import { faker } from '@faker-js/faker';
 import dayjs from 'dayjs';
 import bcrypt from 'bcrypt';
-import rechargeSchema from '../schemas/rechargeSchema.js';
 
 export function generateCardNumber() {
 	let number = faker.finance.creditCardNumber('mastercard');
@@ -47,27 +46,31 @@ export function generateExpirationDate() {
 
 export async function searchCardByTypeAndEmployeeId(type, employeeId: number) {
 	const searchedCard = await cardRepository.findByTypeAndEmployeeId(type, employeeId);
-	if (searchedCard) throw errosUtils.conflictError('Card');
+	if (searchedCard) throw errorsUtils.conflictError('Card');
 }
 
 export async function findCardById(cardId: number) {
 	const searchedCard = await cardRepository.findById(cardId);
-	if (!searchedCard) throw errosUtils.notFoundError('Card');
+	if (!searchedCard) throw errorsUtils.notFoundError('Card');
 
 	return searchedCard;
 }
 
 export function expirationDateValid(expirationDate: string) {
-	if (dayjs().format('MM/YY') > expirationDate) throw errosUtils.badRequestError('Expiration Date');
+	if (dayjs().format('MM/YY') > expirationDate) throw errorsUtils.badRequestError('Expiration Date');
 }
 
 export function isActivatedCard(password: string) {
-	if (password) throw errosUtils.badRequestError('Card Activated');
+	if (password) throw errorsUtils.badRequestError('Card Activated');
+}
+
+export function isNotActivatedCard(password: string) {
+	if (!password) throw errorsUtils.badRequestError('Card Not Activated');
 }
 
 export function isValidCVV(cvv: string, securityCode: string) {
 	const isCVV = bcrypt.compareSync(cvv, securityCode);
-	if (!isCVV) throw errosUtils.unauthorizedError('CVV');
+	if (!isCVV) throw errorsUtils.unauthorizedError('CVV');
 }
 
 export function cardPasswordHashed(password: string) {
@@ -82,7 +85,7 @@ export async function activeCard(cardId: number, activatedCard) {
 
 export async function paymentsCard(id: number) {
 	const searchedPayments = await paymentRepository.findByCardId(id);
-	if (!searchedPayments) throw errosUtils.notFoundError('Card');
+	if (!searchedPayments) throw errorsUtils.notFoundError('Card');
 
 	const payments = searchedPayments.map(payment => ({
 		...payment,
@@ -94,7 +97,7 @@ export async function paymentsCard(id: number) {
 
 export async function rechargesCard(id: number) {
 	const searchedRecharges = await reachargeRepository.findByCardId(id);
-	if (!searchedRecharges) throw errosUtils.notFoundError('Card');
+	if (!searchedRecharges) throw errorsUtils.notFoundError('Card');
 
 	const recharges = searchedRecharges.map(recharge => ({
 		...recharge,
@@ -107,12 +110,12 @@ export async function rechargesCard(id: number) {
 export function balanceCard(searchedPayments, searchedRecharges) {
 	let totalPayments = 0;
 	if (searchedPayments.length > 0) {
-		totalPayments = searchedPayments.map((payment) => (totalPayments += payment.amount))[0];
+		searchedPayments.map((payment) => (totalPayments += payment.amount));
 	}
 
 	let totalRecharges = 0;
 	if (searchedRecharges.length > 0) {
-		totalRecharges = searchedRecharges.map((recharge) => (totalRecharges += recharge.amount))[0];
+		searchedRecharges.map((recharge) => (totalRecharges += recharge.amount));
 	}
 
 	return totalRecharges - totalPayments;

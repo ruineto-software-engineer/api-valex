@@ -1,11 +1,11 @@
 import * as employeeRepository from '../repositories/employeeRepository.js';
-import * as errorUtils from '../utils/errosUtils.js';
+import * as errorsUtils from '../utils/errorsUtils.js';
 
 export async function employeeValidation(employeeId: number, employeeIdParams: number) {
-	if (employeeId !== employeeIdParams) throw errorUtils.badRequestError('employeeIdParams and employeeId must be identical!');
+	if (employeeId !== employeeIdParams) throw errorsUtils.badRequestError('employeeIdParams and employeeId must be identical!');
 
 	const employee = await employeeRepository.findById(employeeId);
-	if (!employee) throw errorUtils.notFoundError('Employee');
+	if (!employee) throw errorsUtils.notFoundError('Employee');
 
 	return employee;
 }

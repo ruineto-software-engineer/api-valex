@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { stripHtml } from "string-strip-html";
-import cardActivationSchema from "../schemas/cardActivationSchema.js";
 import cardSchema from "../schemas/cardSchema.js";
+import cardActivationSchema from "../schemas/cardActivationSchema.js";
+import paymentSchema from "../schemas/paymentSchema.js";
 import rechargeSchema from "../schemas/rechargeSchema.js";
 
 function sanitizeString(string: string) {
@@ -11,7 +12,8 @@ function sanitizeString(string: string) {
 const schemas = {
   "/card": cardSchema,
   "/card/activation": cardActivationSchema,
-  "/recharge": rechargeSchema
+  "/recharge": rechargeSchema,
+  "/payment": paymentSchema
 }
 
 export default async function validateSchemaMiddleware(req: Request, res: Response, next: NextFunction) {

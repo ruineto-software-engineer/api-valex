@@ -15,7 +15,7 @@ export function badRequestError(entity: string) {
 export function unauthorizedError(entity: string) {
 	return {
 		type: 'error_unauthorized',
-		message: entity ? `To access your "${entity}" you need to be authenticated!` : `To access, you must be authenticated!`
+		message: entity ? `To access your account you need to be authenticated, enter the correct "${entity}"!` : `To access, you must be authenticated!`
 	};
 }
 
