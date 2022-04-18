@@ -17,6 +17,7 @@ const schemas = {
 	'/card/activation': cardActivationSchema,
 	'/card/manage': cardManageSchema,
 	'/card/virtual/create': cardVirtualSchema,
+	'/card/virtual/delete': cardVirtualSchema,
 	'/recharge': rechargeSchema,
 	'/payment': paymentSchema,
 	'/payment/online': onlinePaymentSchema
@@ -32,8 +33,12 @@ export default async function validateSchemaMiddleware(req: Request, res: Respon
 		schema = schemas['/card/manage'];
 	} else if (req.path.includes('online')) {
 		schema = schemas['/payment/online'];
-	} else if (req.path.includes('virtual')) {
-		schema = schemas['/card/virtual/create'];
+	} else if (req.path.includes('virtual') || req.path.includes('delete')) {
+		if (req.path.includes('virtual')) {
+			schema = schemas['/card/virtual/create'];
+		} else {
+			schema = schemas['/card/virtual/delete'];
+		}
 	} else {
 		schema = schemas['/' + req.path.split('/')[1]];
 	}

@@ -60,6 +60,20 @@ export async function createVirtualCard(req: Request, res: Response) {
 	res.sendStatus(201);
 }
 
+export async function deleteVirtualCard(req: Request, res: Response) {
+	const virtualCardData = req.body;
+	const cardIdParams = parseInt(req.params.cardId);
+
+	cardService.checkCardId(virtualCardData.cardId, cardIdParams);
+	const searchedCard = await cardService.findCardById(virtualCardData.cardId);
+	cardService.isVirtualCard(searchedCard.isVirtual);
+	cardService.isValidPassword(virtualCardData.password, searchedCard.password);
+
+	cardService.deleteVirtualCard(virtualCardData.cardId);
+
+	res.send(200);
+}
+
 export async function activationCard(req: Request, res: Response) {
 	const cardData = req.body;
 	const cardIdParams = parseInt(req.params.cardId);

@@ -13,7 +13,7 @@ dotenv.config();
 const cryptr = new Cryptr(process.env.CRYPTR_KEY);
 
 export function checkCardId(cardId: number, cardIdParams: number) {
-	if (cardId !== cardIdParams) throw errorsUtils.badRequestError('cardIdParams and cardId must be identical!');
+	if (cardId !== cardIdParams) throw errorsUtils.badRequestError('cardIdParams and cardId must be identical');
 }
 
 export function checkManageType(type: string) {
@@ -159,4 +159,12 @@ export function balanceCard(searchedPayments, searchedRecharges) {
 	}
 
 	return totalRecharges - totalPayments;
+}
+
+export function isVirtualCard(isVirtual: boolean) {
+	if (!isVirtual) throw errorsUtils.badRequestError('Card is Not Virtual');
+}
+
+export async function deleteVirtualCard(virtualCardId: number) {
+	await cardRepository.remove(virtualCardId);
 }

@@ -12,7 +12,7 @@ cardRouter.post(
 	cardController.createCard
 );
 cardRouter.post('/card/virtual/create/:cardId', validateSchemaMiddleware, cardController.createVirtualCard);
-cardRouter.delete('/card/virtual/delete/:cardId', );
+cardRouter.delete('/card/virtual/delete/:cardId', validateSchemaMiddleware, cardController.deleteVirtualCard);
 cardRouter.put('/card/:cardId/activation', validateSchemaMiddleware, cardController.activationCard);
 cardRouter.put('/card/:cardId/manage/:type', validateSchemaMiddleware, cardController.manageCard);
 cardRouter.get('/card/:cardId/balance', cardController.balanceCard);
