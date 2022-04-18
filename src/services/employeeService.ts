@@ -1,9 +1,12 @@
 import * as employeeRepository from '../repositories/employeeRepository.js';
 import * as errorsUtils from '../utils/errorsUtils.js';
 
-export async function employeeValidation(employeeId: number, employeeIdParams: number) {
-	if (employeeId !== employeeIdParams) throw errorsUtils.badRequestError('employeeIdParams and employeeId must be identical!');
+export function checkEmployeeId(employeeId: number, employeeIdParams: number) {
+	if (employeeId !== employeeIdParams)
+		throw errorsUtils.badRequestError('employeeIdParams and employeeId must be identical!');
+}
 
+export async function employeeValidation(employeeId: number) {
 	const employee = await employeeRepository.findById(employeeId);
 	if (!employee) throw errorsUtils.notFoundError('Employee');
 
@@ -12,9 +15,7 @@ export async function employeeValidation(employeeId: number, employeeIdParams: n
 
 export function generateEmployeeCardName(employeeFullName: string) {
 	const employeeFullNameUpperCase = employeeFullName.toUpperCase();
-	const employeeNameArr = employeeFullNameUpperCase
-		.split(' ')
-		.filter((name) => name.length >= 3);
+	const employeeNameArr = employeeFullNameUpperCase.split(' ').filter((name) => name.length >= 3);
 
 	let hashTable = {};
 	let employeeCardNameArr = [];

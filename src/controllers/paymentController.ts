@@ -5,7 +5,9 @@ import * as businessService from '../services/businessService.js';
 
 export async function createPayment(req: Request, res: Response) {
 	const paymentData = req.body;
+	const cardIdParams = parseInt(req.params.cardId);
 
+	cardService.checkCardId(paymentData.cardId, cardIdParams);
 	const searchedCard = await cardService.findCardById(paymentData.cardId);
 	cardService.expirationDateValid(searchedCard.expirationDate);
 	cardService.isNotActivatedCard(searchedCard.password);

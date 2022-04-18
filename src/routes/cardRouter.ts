@@ -6,12 +6,13 @@ import validateSchemaMiddleware from '../middlewares/validateSchemaMiddleware.js
 const cardRouter = Router();
 
 cardRouter.post(
-	'/card/:employeeId/create',
+	'/card/create/:employeeId',
 	validateApiKeyMiddleware,
 	validateSchemaMiddleware,
 	cardController.createCard
 );
-cardRouter.put('/card/:employeeId/activation/:cardId', validateSchemaMiddleware, cardController.activationCard);
-cardRouter.get('/card/:employeeId/balance/:cardId', cardController.balanceCard);
+cardRouter.put('/card/:cardId/activation', validateSchemaMiddleware, cardController.activationCard);
+cardRouter.get('/card/:cardId/balance', cardController.balanceCard);
+cardRouter.get('/card/:cardId', cardController.getCard);
 
 export default cardRouter;

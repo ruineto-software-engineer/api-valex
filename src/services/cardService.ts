@@ -5,7 +5,16 @@ import * as errorsUtils from '../utils/errorsUtils.js';
 import { valid_credit_card } from '../utils/cardUtils.js';
 import { faker } from '@faker-js/faker';
 import dayjs from 'dayjs';
+import Cryptr from 'cryptr';
 import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const cryptr = new Cryptr(process.env.CRYPTR_KEY);
+
+export function checkCardId(cardId: number, cardIdParams: number) {
+	if (cardId !== cardIdParams) throw errorsUtils.badRequestError('cardIdParams and cardId must be identical!');
+}
 
 export function generateCardNumber() {
 	let number = faker.finance.creditCardNumber('mastercard');
@@ -31,9 +40,8 @@ export function generateCardNumber() {
 
 export function generateCardCVV() {
 	const cvv = faker.finance.creditCardCVV();
-	console.log('CVV card genereted (to test):', cvv);
 
-	return bcrypt.hashSync(cvv, 10);
+	return cryptr.encrypt(cvv);
 }
 
 export async function insertNewCard(newCard) {
@@ -68,9 +76,9 @@ export function isNotActivatedCard(password: string) {
 	if (!password) throw errorsUtils.badRequestError('Card Not Activated');
 }
 
-export function isValidCVV(cvv: string, securityCode: string) {
-	const isCVV = bcrypt.compareSync(cvv, securityCode);
-	if (!isCVV) throw errorsUtils.unauthorizedError('CVV');
+export function isValidCVV(cvv: string, searchedCardSecurityCode: string) {
+	const decryptedCVV = cryptr.decrypt(searchedCardSecurityCode);
+	if(decryptedCVV !== cvv) throw errorsUtils.unauthorizedError('CVV');
 }
 
 export function cardPasswordHashed(password: string) {
@@ -87,7 +95,7 @@ export async function paymentsCard(id: number) {
 	const searchedPayments = await paymentRepository.findByCardId(id);
 	if (!searchedPayments) throw errorsUtils.notFoundError('Card');
 
-	const payments = searchedPayments.map(payment => ({
+	const payments = searchedPayments.map((payment) => ({
 		...payment,
 		timestamp: dayjs(payment.timestamp).format('DD/MM/YYYY')
 	}));
@@ -99,7 +107,7 @@ export async function rechargesCard(id: number) {
 	const searchedRecharges = await reachargeRepository.findByCardId(id);
 	if (!searchedRecharges) throw errorsUtils.notFoundError('Card');
 
-	const recharges = searchedRecharges.map(recharge => ({
+	const recharges = searchedRecharges.map((recharge) => ({
 		...recharge,
 		timestamp: dayjs(recharge.timestamp).format('DD/MM/YYYY')
 	}));

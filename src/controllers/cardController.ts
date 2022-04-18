@@ -1,12 +1,16 @@
 import { Request, Response } from 'express';
 import * as employeeService from '../services/employeeService.js';
 import * as cardService from '../services/cardService.js';
+import Cryptr from 'cryptr';
+
+const cryptr = new Cryptr(process.env.CRYPTR_KEY);
 
 export async function createCard(req: Request, res: Response) {
 	const { employeeId, type } = req.body;
 	const employeeIdParams = parseInt(req.params.employeeId);
 
-	const employee = await employeeService.employeeValidation(employeeId, employeeIdParams);
+	employeeService.checkEmployeeId(employeeId, employeeIdParams);
+	const employee = await employeeService.employeeValidation(employeeId);
 	const cardholderName = employeeService.generateEmployeeCardName(employee.fullName);
 	const expirationDate = cardService.generateExpirationDate();
 	const number = cardService.generateCardNumber();
@@ -33,7 +37,9 @@ export async function createCard(req: Request, res: Response) {
 
 export async function activationCard(req: Request, res: Response) {
 	const cardData = req.body;
+	const cardIdParams = parseInt(req.params.cardId);
 
+	cardService.checkCardId(cardData.cardId, cardIdParams);
 	const searchedCard = await cardService.findCardById(cardData.cardId);
 	cardService.expirationDateValid(searchedCard.expirationDate);
 	cardService.isActivatedCard(searchedCard.password);
@@ -62,7 +68,15 @@ export async function balanceCard(req: Request, res: Response) {
 		balance,
 		transactions: searchedPayments,
 		recharges: searchedRecharges
-	}
+	};
 
 	res.status(200).send(totalBalance);
+}
+
+export async function getCard(req: Request, res: Response) {
+	const cardId = parseInt(req.params.cardId);
+
+	const searchedCard = await cardService.findCardById(cardId);
+
+	res.send({ ...searchedCard, securityCode: cryptr.decrypt(searchedCard.securityCode) });
 }
