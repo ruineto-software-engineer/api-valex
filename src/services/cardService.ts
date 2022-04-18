@@ -162,6 +162,10 @@ export function balanceCard(searchedPayments, searchedRecharges) {
 }
 
 export function isVirtualCard(isVirtual: boolean) {
+	if (isVirtual) throw errorsUtils.badRequestError('Card is Virtual');
+}
+
+export function isNotVirtualCard(isVirtual: boolean) {
 	if (!isVirtual) throw errorsUtils.badRequestError('Card is Not Virtual');
 }
 

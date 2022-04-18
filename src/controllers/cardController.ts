@@ -66,7 +66,7 @@ export async function deleteVirtualCard(req: Request, res: Response) {
 
 	cardService.checkCardId(virtualCardData.cardId, cardIdParams);
 	const searchedCard = await cardService.findCardById(virtualCardData.cardId);
-	cardService.isVirtualCard(searchedCard.isVirtual);
+	cardService.isNotVirtualCard(searchedCard.isVirtual);
 	cardService.isValidPassword(virtualCardData.password, searchedCard.password);
 
 	cardService.deleteVirtualCard(virtualCardData.cardId);
@@ -80,9 +80,10 @@ export async function activationCard(req: Request, res: Response) {
 
 	cardService.checkCardId(cardData.cardId, cardIdParams);
 	const searchedCard = await cardService.findCardById(cardData.cardId);
+	cardService.isVirtualCard(searchedCard.isVirtual);
 	cardService.expirationDateValid(searchedCard.expirationDate);
 	cardService.isActivatedCard(searchedCard.password);
-	cardService.isValidCVV(cardData.cvv, searchedCard.securityCode);
+	cardService.isValidCVV(cardData.securityCode, searchedCard.securityCode);
 	const passwordHashed = cardService.cardPasswordHashed(cardData.password);
 
 	const activatedCard = {
