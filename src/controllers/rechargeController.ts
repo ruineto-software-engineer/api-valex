@@ -8,6 +8,7 @@ export async function createRecharge(req: Request, res: Response) {
 
 	cardService.checkCardId(rechargeData.cardId, cardIdParams);
 	const searchedCard = await cardService.findCardById(rechargeData.cardId);
+	cardService.isVirtualCard(searchedCard.isVirtual);
 	cardService.expirationDateValid(searchedCard.expirationDate);
 
 	await rechargeService.insertRecharge(rechargeData);
