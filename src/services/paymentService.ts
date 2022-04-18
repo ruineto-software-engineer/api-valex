@@ -1,3 +1,4 @@
+import * as cardRepository from '../repositories/cardRepository.js';
 import * as paymentRepository from '../repositories/paymentRepository.js';
 import * as errorsUtils from '../utils/errorsUtils.js';
 import bcrypt from 'bcrypt';
@@ -13,10 +14,16 @@ export function isValidCardType(searchedCardType: string, searchedBusinessType: 
 }
 
 export function isValidCardBalance(balance: number, paymentAmount: number) {
-	if (balance < paymentAmount)
-		throw errorsUtils.badRequestError('insufficient balance to make the purchase');
+	if (balance < paymentAmount) throw errorsUtils.badRequestError('insufficient balance to make the purchase');
 }
 
 export async function createCardPayment(paymentData) {
-  await paymentRepository.insert(paymentData);
+	await paymentRepository.insert(paymentData);
+}
+
+export async function validateCardPaymentOnline(number: string, cardholderName: string, expirationDate: string) {
+	const card = await cardRepository.findByCardDetails(number, cardholderName, expirationDate);
+	if(!card) throw errorsUtils.notFoundError('Card (check the information provided in the payment)');
+
+	return card;
 }
