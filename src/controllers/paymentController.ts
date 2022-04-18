@@ -45,13 +45,17 @@ export async function onlinePayment(req: Request, res: Response) {
 	const searchedBusiness = await businessService.findBusinessById(cardData.businessId);
 	paymentService.isValidCardType(searchedCard.type, searchedBusiness.type);
 
-	const searchedPayments = await cardService.paymentsCard(searchedCard.id);
-	const searchedRecharges = await cardService.rechargesCard(searchedCard.id);
+	const searchedPayments = await cardService.paymentsCard(
+		searchedCard.isVirtual ? searchedCard.originalCardId : searchedCard.id
+	);
+	const searchedRecharges = await cardService.rechargesCard(
+		searchedCard.isVirtual ? searchedCard.originalCardId : searchedCard.id
+	);
 	const balance = cardService.balanceCard(searchedPayments, searchedRecharges);
 	paymentService.isValidCardBalance(balance, cardData.amount);
 
 	paymentService.createCardPayment({
-		cardId: cardData.cardId,
+		cardId: searchedCard.isVirtual ? searchedCard.originalCardId : searchedCard.id,
 		businessId: cardData.businessId,
 		amount: cardData.amount
 	});

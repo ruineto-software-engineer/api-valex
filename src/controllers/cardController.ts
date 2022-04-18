@@ -107,7 +107,7 @@ export async function manageCard(req: Request, res: Response) {
 	cardService.expirationDateValid(searchedCard.expirationDate);
 	cardService.isValidPassword(cardData.password, searchedCard.password);
 
-	if (type === "block") {
+	if (type === 'block') {
 		cardService.isBlockedCard(searchedCard.isBlocked);
 		searchedCard.isBlocked = true;
 	} else {
@@ -124,8 +124,12 @@ export async function balanceCard(req: Request, res: Response) {
 	const cardId = parseInt(req.params.cardId);
 
 	const searchedCard = await cardService.findCardById(cardId);
-	const searchedPayments = await cardService.paymentsCard(searchedCard.id);
-	const searchedRecharges = await cardService.rechargesCard(searchedCard.id);
+	const searchedPayments = await cardService.paymentsCard(
+		searchedCard.isVirtual ? searchedCard.originalCardId : searchedCard.id
+	);
+	const searchedRecharges = await cardService.rechargesCard(
+		searchedCard.isVirtual ? searchedCard.originalCardId : searchedCard.id
+	);
 	const balance = cardService.balanceCard(searchedPayments, searchedRecharges);
 
 	const totalBalance = {
