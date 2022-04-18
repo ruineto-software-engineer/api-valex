@@ -11,6 +11,7 @@ export async function createPayment(req: Request, res: Response) {
 
 	const searchedCard = await cardService.findCardById(paymentData.cardId);
 	cardService.expirationDateValid(searchedCard.expirationDate);
+	cardService.isVirtualCard(searchedCard.isVirtual);
 	cardService.isValidCard(searchedCard.password, searchedCard.isBlocked);
 	paymentService.isValidPassword(paymentData.password, searchedCard.password);
 
