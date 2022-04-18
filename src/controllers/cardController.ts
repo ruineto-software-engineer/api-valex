@@ -35,6 +35,31 @@ export async function createCard(req: Request, res: Response) {
 	res.sendStatus(201);
 }
 
+export async function createVirtualCard(req: Request, res: Response) {
+	const virtualCardData = req.body;
+	const cardIdParams = parseInt(req.params.cardId);
+
+	cardService.checkCardId(virtualCardData.cardId, cardIdParams);
+	const searchedCard = await cardService.findCardById(virtualCardData.cardId);
+	cardService.isValidPassword(virtualCardData.password, searchedCard.password);
+	const number = cardService.generateCardNumber();
+	const expirationDate = cardService.generateExpirationDate();
+	const securityCode = cardService.generateCardCVV();
+
+	const newVirtualCard = {
+		...searchedCard,
+		number,
+		expirationDate,
+		securityCode,
+		isVirtual: true,
+		originalCardId: virtualCardData.cardId
+	};
+
+	await cardService.insertNewCard(newVirtualCard);
+
+	res.sendStatus(201);
+}
+
 export async function activationCard(req: Request, res: Response) {
 	const cardData = req.body;
 	const cardIdParams = parseInt(req.params.cardId);

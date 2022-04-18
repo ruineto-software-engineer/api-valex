@@ -6,6 +6,7 @@ import cardManageSchema from '../schemas/cardManageSchema.js';
 import paymentSchema from '../schemas/paymentSchema.js';
 import rechargeSchema from '../schemas/rechargeSchema.js';
 import onlinePaymentSchema from '../schemas/onlinePaymentSchema.js';
+import cardVirtualSchema from '../schemas/cardVirtualSchema.js';
 
 function sanitizeString(string: string) {
 	return stripHtml(string).result.trim();
@@ -15,6 +16,7 @@ const schemas = {
 	'/card': cardSchema,
 	'/card/activation': cardActivationSchema,
 	'/card/manage': cardManageSchema,
+	'/card/virtual/create': cardVirtualSchema,
 	'/recharge': rechargeSchema,
 	'/payment': paymentSchema,
 	'/payment/online': onlinePaymentSchema
@@ -28,8 +30,10 @@ export default async function validateSchemaMiddleware(req: Request, res: Respon
 		schema = schemas['/card/activation'];
 	} else if (req.path.includes('manage')) {
 		schema = schemas['/card/manage'];
-	} else if(req.path.includes('online')){
+	} else if (req.path.includes('online')) {
 		schema = schemas['/payment/online'];
+	} else if (req.path.includes('virtual')) {
+		schema = schemas['/card/virtual/create'];
 	} else {
 		schema = schemas['/' + req.path.split('/')[1]];
 	}
