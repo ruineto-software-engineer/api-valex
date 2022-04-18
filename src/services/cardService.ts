@@ -76,9 +76,18 @@ export function isNotActivatedCard(password: string) {
 	if (!password) throw errorsUtils.badRequestError('Card Not Activated');
 }
 
+export function isBlockedCard(isBlocked: boolean) {
+	if (isBlocked) throw errorsUtils.badRequestError('Blocked Card');
+}
+
 export function isValidCVV(cvv: string, searchedCardSecurityCode: string) {
 	const decryptedCVV = cryptr.decrypt(searchedCardSecurityCode);
-	if(decryptedCVV !== cvv) throw errorsUtils.unauthorizedError('CVV');
+	if (decryptedCVV !== cvv) throw errorsUtils.unauthorizedError('CVV');
+}
+
+export function isValidPassword(password: string, searchedCardPassword: string) {
+	const isPassword = bcrypt.compareSync(password, searchedCardPassword);
+	if (!isPassword) throw errorsUtils.unauthorizedError('Password');
 }
 
 export function cardPasswordHashed(password: string) {
@@ -88,6 +97,10 @@ export function cardPasswordHashed(password: string) {
 }
 
 export async function activeCard(cardId: number, activatedCard) {
+	await cardRepository.update(cardId, activatedCard);
+}
+
+export async function blockCard(cardId: number, activatedCard) {
 	await cardRepository.update(cardId, activatedCard);
 }
 

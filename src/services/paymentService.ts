@@ -1,4 +1,4 @@
-import * as paymentRepository from '../repositories/paymentRepository.js'
+import * as paymentRepository from '../repositories/paymentRepository.js';
 import * as errorsUtils from '../utils/errorsUtils.js';
 import bcrypt from 'bcrypt';
 
