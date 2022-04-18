@@ -10,7 +10,7 @@ export async function createPayment(req: Request, res: Response) {
 	cardService.checkCardId(paymentData.cardId, cardIdParams);
 	const searchedCard = await cardService.findCardById(paymentData.cardId);
 	cardService.expirationDateValid(searchedCard.expirationDate);
-	cardService.isNotActivatedCard(searchedCard.password);
+	cardService.isValidCard(searchedCard.password, searchedCard.isBlocked);
 	paymentService.isValidPassword(paymentData.password, searchedCard.password);
 
 	const searchedBusiness = await businessService.findBusinessById(paymentData.businessId);

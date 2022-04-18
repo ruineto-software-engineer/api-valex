@@ -73,6 +73,16 @@ export function expirationDateValid(expirationDate: string) {
 	if (dayjs().format('MM/YY') > expirationDate) throw errorsUtils.badRequestError('Expiration Date');
 }
 
+export function isValidCard(password: string, isBlocked: boolean) {
+	if (!password || isBlocked) {
+		if (!password) {
+			throw errorsUtils.badRequestError('Card is Not Activated');
+		} else {
+			throw errorsUtils.badRequestError('Card is Blocked');
+		}
+	}
+}
+
 export function isActivatedCard(password: string) {
 	if (password) throw errorsUtils.badRequestError('Card is Activated');
 }
