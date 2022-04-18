@@ -16,6 +16,11 @@ export function checkCardId(cardId: number, cardIdParams: number) {
 	if (cardId !== cardIdParams) throw errorsUtils.badRequestError('cardIdParams and cardId must be identical!');
 }
 
+export function checkManageType(type: string) {
+	if (type !== 'block' && type !== 'unlock')
+		throw errorsUtils.badRequestError('the type can only be "block" or "unlock"');
+}
+
 export function generateCardNumber() {
 	let number = faker.finance.creditCardNumber('mastercard');
 	let isNumber = valid_credit_card(number);
@@ -69,15 +74,19 @@ export function expirationDateValid(expirationDate: string) {
 }
 
 export function isActivatedCard(password: string) {
-	if (password) throw errorsUtils.badRequestError('Card Activated');
+	if (password) throw errorsUtils.badRequestError('Card is Activated');
 }
 
 export function isNotActivatedCard(password: string) {
-	if (!password) throw errorsUtils.badRequestError('Card Not Activated');
+	if (!password) throw errorsUtils.badRequestError('Card is Not Activated');
 }
 
 export function isBlockedCard(isBlocked: boolean) {
-	if (isBlocked) throw errorsUtils.badRequestError('Blocked Card');
+	if (isBlocked) throw errorsUtils.badRequestError('Card is Blocked');
+}
+
+export function isNotBlockedCard(isBlocked: boolean) {
+	if (!isBlocked) throw errorsUtils.badRequestError('Card is Unlocked');
 }
 
 export function isValidCVV(cvv: string, searchedCardSecurityCode: string) {

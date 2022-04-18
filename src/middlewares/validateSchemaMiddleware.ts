@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { stripHtml } from 'string-strip-html';
 import cardSchema from '../schemas/cardSchema.js';
 import cardActivationSchema from '../schemas/cardActivationSchema.js';
-import cardBlockSchema from '../schemas/cardBlockSchema.js';
+import cardManageSchema from '../schemas/cardManageSchema.js';
 import paymentSchema from '../schemas/paymentSchema.js';
 import rechargeSchema from '../schemas/rechargeSchema.js';
 
@@ -13,7 +13,7 @@ function sanitizeString(string: string) {
 const schemas = {
 	'/card': cardSchema,
 	'/card/activation': cardActivationSchema,
-	'/card/block': cardBlockSchema,
+	'/card/manage': cardManageSchema,
 	'/recharge': rechargeSchema,
 	'/payment': paymentSchema
 };
@@ -24,8 +24,8 @@ export default async function validateSchemaMiddleware(req: Request, res: Respon
 	let schema;
 	if (req.path.includes('activation')) {
 		schema = schemas['/card/activation'];
-	} else if (req.path.includes('block')) {
-		schema = schemas['/card/block'];
+	} else if (req.path.includes('manage')) {
+		schema = schemas['/card/manage'];
 	} else {
 		schema = schemas['/' + req.path.split('/')[1]];
 	}

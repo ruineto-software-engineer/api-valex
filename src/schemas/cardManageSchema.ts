@@ -1,8 +1,8 @@
 import joi from 'joi';
 
-const cardBlockSchema = joi.object({
+const cardManageSchema = joi.object({
   cardId: joi.number().required(),
   password: joi.string().pattern(/^[0-9]{4}$/).required()
 });
 
-export default cardBlockSchema;
+export default cardManageSchema;

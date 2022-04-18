@@ -12,7 +12,7 @@ cardRouter.post(
 	cardController.createCard
 );
 cardRouter.put('/card/:cardId/activation', validateSchemaMiddleware, cardController.activationCard);
-cardRouter.put('/card/:cardId/block', validateSchemaMiddleware, cardController.blockCard);
+cardRouter.put('/card/:cardId/manage/:type', validateSchemaMiddleware, cardController.manageCard);
 cardRouter.get('/card/:cardId/balance', cardController.balanceCard);
 cardRouter.get('/card/:cardId', cardController.getCard);
 
