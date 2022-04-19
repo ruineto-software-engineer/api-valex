@@ -14,7 +14,8 @@ cardRouter.post(
 cardRouter.post('/card/virtual/create/:cardId', validateSchemaMiddleware, cardController.createVirtualCard);
 cardRouter.delete('/card/virtual/delete/:cardId', validateSchemaMiddleware, cardController.deleteVirtualCard);
 cardRouter.put('/card/:cardId/activation', validateSchemaMiddleware, cardController.activationCard);
-cardRouter.put('/card/:cardId/manage/:type', validateSchemaMiddleware, cardController.manageCard);
+cardRouter.put('/card/:cardId/manage/block', validateSchemaMiddleware, cardController.manageCard);
+cardRouter.put('/card/:cardId/manage/unlock', validateSchemaMiddleware, cardController.manageCard);
 cardRouter.get('/card/:cardId/balance', cardController.balanceCard);
 cardRouter.get('/card/:cardId', cardController.getCard);
 

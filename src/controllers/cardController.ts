@@ -98,19 +98,19 @@ export async function activationCard(req: Request, res: Response) {
 
 export async function manageCard(req: Request, res: Response) {
 	const cardData = req.body;
-	const { type } = req.params;
 	const cardIdParams = parseInt(req.params.cardId);
 
-	cardService.checkManageType(type);
 	cardService.checkCardId(cardData.cardId, cardIdParams);
 	const searchedCard = await cardService.findCardById(cardData.cardId);
 	cardService.expirationDateValid(searchedCard.expirationDate);
 	cardService.isValidPassword(cardData.password, searchedCard.password);
 
-	if (type === 'block') {
+	if (req.path.includes('block')) {
 		cardService.isBlockedCard(searchedCard.isBlocked);
 		searchedCard.isBlocked = true;
-	} else {
+	}
+
+	if (req.path.includes('unlock')) {
 		cardService.isNotBlockedCard(searchedCard.isBlocked);
 		searchedCard.isBlocked = false;
 	}
