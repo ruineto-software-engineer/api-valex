@@ -1,6 +1,6 @@
 import joi from 'joi';
 
-const onlinePaymentSchema = joi.object({
+const paymentOnlineSchema = joi.object({
 	cardId: joi.number().required(),
 	number: joi.string().pattern(/^[0-9]{16}$/).required(),
 	cardholderName: joi.string().required(),
@@ -10,4 +10,4 @@ const onlinePaymentSchema = joi.object({
 	amount: joi.number().min(1).required()
 });
 
-export default onlinePaymentSchema;
+export default paymentOnlineSchema;

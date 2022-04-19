@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import { stripHtml } from 'string-strip-html';
 import cardSchema from '../schemas/cardSchema.js';
+import cardVirtualSchema from '../schemas/cardVirtualSchema.js';
 import cardActivationSchema from '../schemas/cardActivationSchema.js';
 import cardManageSchema from '../schemas/cardManageSchema.js';
 import paymentSchema from '../schemas/paymentSchema.js';
+import paymentOnlineSchema from '../schemas/paymentOnlineSchema.js';
 import rechargeSchema from '../schemas/rechargeSchema.js';
-import onlinePaymentSchema from '../schemas/onlinePaymentSchema.js';
-import cardVirtualSchema from '../schemas/cardVirtualSchema.js';
 
 function sanitizeString(string: string) {
 	return stripHtml(string).result.trim();
@@ -20,7 +20,7 @@ const schemas = {
 	'/card/virtual/delete': cardVirtualSchema,
 	'/recharge': rechargeSchema,
 	'/payment': paymentSchema,
-	'/payment/online': onlinePaymentSchema
+	'/payment/online': paymentOnlineSchema
 };
 
 export default async function validateSchemaMiddleware(req: Request, res: Response, next: NextFunction) {
