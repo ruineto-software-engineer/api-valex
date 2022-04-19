@@ -33,15 +33,19 @@ export async function onlinePayment(req: Request, res: Response) {
 	const cardIdParams = parseInt(req.params.cardId);
 
 	cardService.checkCardId(cardData.cardId, cardIdParams);
-	
+
 	const isCardIdBlocked = await cardService.findCardById(cardData.cardId);
 	cardService.isBlockedCard(isCardIdBlocked.isBlocked);
 
+	const isValidSearchedCard = await cardService.findCardById(cardData.cardId);
 	const searchedCard = await paymentService.validateCardPaymentOnline(
 		cardData.number,
 		cardData.cardholderName,
 		cardData.expirationDate
 	);
+
+	paymentService.isValidProviderInfoCard(isValidSearchedCard.number, searchedCard.number);
+
 	cardService.expirationDateValid(searchedCard.expirationDate);
 	cardService.isValidCard(searchedCard.password, searchedCard.isBlocked);
 	cardService.isValidCVV(cardData.securityCode, searchedCard.securityCode);

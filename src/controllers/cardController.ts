@@ -41,6 +41,7 @@ export async function createVirtualCard(req: Request, res: Response) {
 
 	cardService.checkCardId(virtualCardData.cardId, cardIdParams);
 	const searchedCard = await cardService.findCardById(virtualCardData.cardId);
+	cardService.isVirtualCard(searchedCard.isVirtual);
 	cardService.isValidPassword(virtualCardData.password, searchedCard.password);
 	const number = cardService.generateCardNumber();
 	const expirationDate = cardService.generateExpirationDate();
@@ -71,7 +72,7 @@ export async function deleteVirtualCard(req: Request, res: Response) {
 
 	cardService.deleteVirtualCard(virtualCardData.cardId);
 
-	res.send(200);
+	res.sendStatus(200);
 }
 
 export async function activationCard(req: Request, res: Response) {

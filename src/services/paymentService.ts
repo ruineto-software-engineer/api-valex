@@ -23,7 +23,12 @@ export async function createCardPayment(paymentData) {
 
 export async function validateCardPaymentOnline(number: string, cardholderName: string, expirationDate: string) {
 	const card = await cardRepository.findByCardDetails(number, cardholderName, expirationDate);
-	if(!card) throw errorsUtils.notFoundError('Card (check the information provided in the payment)');
+	if (!card) throw errorsUtils.notFoundError('Card (check the information provided in the payment)');
 
 	return card;
+}
+
+export function isValidProviderInfoCard(isValidSearchedCardNumber: string, searchedCardNumber: string) {
+	if (isValidSearchedCardNumber !== searchedCardNumber)
+		throw errorsUtils.badRequestError('Distinct card credentials were provided');
 }
